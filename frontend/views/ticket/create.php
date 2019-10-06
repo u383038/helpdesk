@@ -10,7 +10,7 @@ use yii\widgets\ActiveForm;
 <div class="create">
 
     <?php $form = ActiveForm::begin(); ?>
-    
+
         <?= $form->field($model, 'name') ?>
         <?= $form->field($model, 'type')->dropDownList([
             '0' => 'Ошибка',
