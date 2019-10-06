@@ -18,6 +18,7 @@ use yii\widgets\ActiveForm;
             '2' => 'Нововедение'
         ]);?>
         <?= $form->field($model, 'description')->textarea() ?>
+        <?= $form->field($model, 'file')->fileInput() ?>
     
         <div class="form-group">
             <?= Html::submitButton('Submit', ['class' => 'btn btn-primary']) ?>

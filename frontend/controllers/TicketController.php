@@ -6,6 +6,7 @@ use common\models\Ticket;
 use yii\web\Controller;
 use Yii;
 use yii\filters\AccessControl;
+use yii\web\UploadedFile;
 
 class TicketController extends Controller
 {
@@ -33,7 +34,11 @@ class TicketController extends Controller
 
             $model->user_id = Yii::$app->user->getId();
             $model->status = Ticket::STATUS_NEW;
+            $model->file = UploadedFile::getInstance($model, 'file');
             if ($model->validate() && $model->save()) {
+                $path = 'upload/';
+                $model->file->saveAs( $path . $model->file);
+
                 Yii::$app->session->setFlash('success', 'Ticket created');
                 return $this->redirect(['ticket/index']);
             }
