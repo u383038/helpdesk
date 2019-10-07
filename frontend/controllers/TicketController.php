@@ -7,6 +7,7 @@ use yii\web\Controller;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\UploadedFile;
+use common\models\TicketSearch;
 
 class TicketController extends Controller
 {
@@ -36,8 +37,11 @@ class TicketController extends Controller
             $model->status = Ticket::STATUS_NEW;
             $model->file = UploadedFile::getInstance($model, 'file');
             if ($model->validate() && $model->save()) {
-                $path = 'upload/';
-                $model->file->saveAs( $path . $model->file);
+                if($model->file)
+                {
+                    $path = 'upload/';
+                    $model->file->saveAs( $path . $model->file);
+                }
 
                 Yii::$app->session->setFlash('success', 'Ticket created');
                 return $this->redirect(['ticket/index']);
@@ -51,20 +55,54 @@ class TicketController extends Controller
 
     public function actionIndex()
     {
-        $tickets = Ticket::find()->where(['user_id' => Yii::$app->user->getId()])->all();
+
+        $searchModel = new TicketSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->query->andFilterWhere(['user_id' => Yii::$app->user->getId()]);
 
         return $this->render('index', [
-            'tickets' => $tickets,
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
         ]);
+
     }
 
     public function actionView($id)
     {
-        $ticket = Ticket::findOne($id);
+        $model = $this->findModel($id);
 
         return $this->render('view', [
-            'ticket' => $ticket,
+            'model' => $model,
         ]);
+    }
+
+    public function actionUpdate($id)
+    {
+        $model = $this->findModel($id);
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => $model->id, 'user_id' => $model->user_id]);
+        }
+
+        return $this->render('update', [
+            'model' => $model,
+        ]);
+    }
+
+    public function actionDelete($id)
+    {
+        $this->findModel($id)->delete();
+
+        return $this->redirect(['index']);
+    }
+
+    protected function findModel($id)
+    {
+        if (($model = Ticket::findOne(['id' => $id])) !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException('The requested page does not exist.');
     }
 
 }
