@@ -33,9 +33,11 @@ class Message extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id', 'ticket_id', 'user_id'], 'required'],
+            ['user_id', 'default', 'value' => Yii::$app->user->getId()],
+
+            [['ticket_id', 'user_id'], 'required'],
             [['id', 'ticket_id', 'user_id'], 'integer'],
-            [['text', 'date', 'env'], 'string', 'max' => 45],
+            [['text', 'date', 'env'], 'string', 'max' => 511],
             [['id', 'ticket_id', 'user_id'], 'unique', 'targetAttribute' => ['id', 'ticket_id', 'user_id']],
             [['ticket_id'], 'exist', 'skipOnError' => true, 'targetClass' => Ticket::className(), 'targetAttribute' => ['ticket_id' => 'id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],

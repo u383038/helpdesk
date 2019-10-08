@@ -14,9 +14,9 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'name') ?>
     <?= $form->field($model, 'type')->dropDownList([
-        '0' => 'Ошибка',
-        '1' => 'Доработка',
-        '2' => 'Нововедение'
+        'Ошибка' => 'Ошибка',
+        'Доработка' => 'Доработка',
+        'Нововедение' => 'Нововедение'
     ]);?>
     <?= $form->field($model, 'description')->textarea() ?>
     <?= $form->field($model, 'file')->fileInput() ?>

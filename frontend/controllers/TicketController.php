@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\models\Message;
 use common\models\Ticket;
 use yii\web\Controller;
 use Yii;
@@ -70,9 +71,28 @@ class TicketController extends Controller
     public function actionView($id)
     {
         $model = $this->findModel($id);
+        $messages = Message::find()
+            ->where(['ticket_id' => $model->id])
+            ->andWhere(['env' => 'user'])
+            ->with('user')
+            ->all();
+
+        $newMessage = new Message();
+        if(Yii::$app->request->isPost && $newMessage->load(Yii::$app->request->post()))
+        {
+            $newMessage->ticket_id = $model->id;
+            $newMessage->env = 'user';
+            if ($newMessage->save())
+            {
+                //Yii::$app->session->setFlash('success', 'Message sended');
+                return $this->refresh();
+            }
+        }
 
         return $this->render('view', [
             'model' => $model,
+            'messages' => $messages,
+            'newMessage' => $newMessage
         ]);
     }
 
