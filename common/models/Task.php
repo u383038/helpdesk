@@ -33,7 +33,7 @@ class Task extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id', 'ticket_id', 'user_id'], 'required'],
+            [['ticket_id', 'user_id'], 'required'],
             [['id', 'ticket_id', 'user_id'], 'integer'],
             [['deadline'], 'safe'],
             [['name', 'description'], 'string', 'max' => 45],

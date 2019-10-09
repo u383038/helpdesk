@@ -42,6 +42,7 @@ class Ticket extends \yii\db\ActiveRecord
     {
         return [
             [['user_id'], 'required'],
+            ['deny_reason', 'safe'],
             [['id', 'user_id', 'status'], 'integer'],
             [['name', 'type'], 'string', 'max' => 255],
             [['description'], 'string', 'max' => 511],
