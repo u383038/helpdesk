@@ -52,7 +52,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <td>
                 <select id="status">
                 <option value="0">Новая заявка</option>
-                <option value="1">В рассмотрение</option>
+                <option value="1">В рассмотрении</option>
                 <option value="2">В процессе</option>
                 <option value="3">Выполнена</option>
                 <option value="5">Отклонена</option>
@@ -102,7 +102,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <br><br>
             <ol>
             <?php foreach ($tasks as $task):?>
-                <li><?= $task->name.' '.$task->description.' '.$task->deadline.' '.$task->user->username ?>
+                <li><?= $task->name.' '.$task->description.' '.$task->deadline.' '.$task->user->username .'('.$task->user->position.')' ?>
             <?php endforeach; ?>
             </ol>
         </div>

@@ -22,7 +22,7 @@ class TicketController extends Controller
                     [
                         'actions' => ['index', 'create', 'view'],
                         'allow' => true,
-                        'roles' => ['admin'],
+                        'roles' => ['admin','employee'],
                     ],
                 ],
             ],
@@ -34,7 +34,17 @@ class TicketController extends Controller
 
         $searchModel = new TicketSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        //$dataProvider->query->andFilterWhere(['user_id' => Yii::$app->user->getId()]);
+
+        if(Yii::$app->user->can('employee'))
+        {
+            
+            $tasks = Task::find()->where(['user_id' => Yii::$app->user->getId()])->all();
+            foreach ($tasks as $task)
+            {
+                $ids[] = $task->ticket_id;
+            }
+            $dataProvider->query->andFilterWhere(['id' => $ids]);
+        }
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -52,13 +62,7 @@ class TicketController extends Controller
             ->andWhere(['env' => 'dev'])
             ->with('user')
             ->all();
-        $messagesUser = Message::find()
-            ->where(['ticket_id' => $model->id])
-            ->andWhere(['env' => 'user'])
-            ->with('user')
-            ->all();
         $tasks = Task::find()->where(['ticket_id' => $model->id])->with('user')->all();
-
 
         $newMessageDev = new Message();
         if(Yii::$app->request->post('devmsg') && $newMessageDev->load(Yii::$app->request->post()))
@@ -71,8 +75,23 @@ class TicketController extends Controller
             }
         }
 
-        $newMessageUser = new Message();
+        if(Yii::$app->user->can('employee'))
+        {
+            return $this->render('view-dev', [
+                'model' => $model,
+                'messagesDev' => $messagesDev,
+                'newMessageDev' => $newMessageDev,
+                'tasks' => $tasks,
+            ]);
+        }
 
+        $messagesUser = Message::find()
+            ->where(['ticket_id' => $model->id])
+            ->andWhere(['env' => 'user'])
+            ->with('user')
+            ->all();
+
+        $newMessageUser = new Message();
         if(Yii::$app->request->post('usermsg') && $newMessageUser->load(Yii::$app->request->post()))
         {
             $newMessageUser->ticket_id = $model->id;

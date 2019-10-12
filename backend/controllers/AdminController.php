@@ -52,7 +52,9 @@ class AdminController extends Controller
         $model = new SignupForm();
 
         if ($model->load(Yii::$app->request->post())) {
-            if ($model->signup()) {
+            if ($user = $model->signup()) {
+                $userRole = Yii::$app->authManager->getRole('employee');
+                Yii::$app->authManager->assign($userRole, $user->getId());
                 return $this->redirect(['admin/user-index']);
             }
         }
