@@ -90,7 +90,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ]); ?>
             <?= $form->field($newTask, 'name') ?>
             <?= $form->field($newTask, 'description')->textarea() ?>
-            <?= $form->field($newTask, 'user_id')->dropDownList(ArrayHelper::map(User::find()->all(), 'id', 'username')) ?>
+            <?= $form->field($newTask, 'user_id')->dropDownList(ArrayHelper::map(User::find()->where(['not', ['position' => null]])->all(), 'id', 'username')) ?>
             <?= $form->field($newTask, 'deadline')->textInput(['type' => 'date'])  ?>
             <input type="hidden" name="task" value="1">
             <div class="form-group">
